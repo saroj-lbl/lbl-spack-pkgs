@@ -14,10 +14,13 @@ class Llamacpp(CMakePackage, CudaPackage):
 
     version("latest", branch="master")
     version("b6276", tag="b6276")
-
+    
     # dependencies
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
     depends_on("cmake@3.14:", type="build")
     depends_on("git", type="build")
+
     
     def cmake_args(self):
         cmake_args = []
@@ -28,7 +31,19 @@ class Llamacpp(CMakePackage, CudaPackage):
 
         # cuda architecture
         if self.spec.satisfies("+cuda"):
+            cmake_args.append("-DCUDAToolkit_ROOT:STRING=" + self.spec["cuda"].prefix)
             if "CMAKE_CUDA_ARCHITECTURES" not in self.spec.variants:
                 cmake_args.append("-DCMAKE_CUDA_ARCHITECTURES=70;75;86;90")
 
         return cmake_args
+
+    def setup_build_environment(self, env):
+        if self.spec.satisfies("+cuda"):
+            env.set("CUDA_HOME", self.spec["cuda"].prefix)
+            env.set("CUDA_ROOT", self.spec["cuda"].prefix)
+            env.prepend_path("PATH", join_path(self.spec["cuda"].prefix, "bin"))
+            env.prepend_path("LD_LIBRARY_PATH", join_path(self.spec["cuda"].prefix, "lib64"))
+
+    def setup_run_environment(self, env):
+        if self.spec.satisfies("+cuda"):
+            env.prepend_path("LD_LIBRARY_PATH", join_path(self.spec["cuda"].prefix, "lib64"))
