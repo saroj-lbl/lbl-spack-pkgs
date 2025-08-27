@@ -21,7 +21,10 @@ class Llamacpp(CMakePackage, CudaPackage):
     depends_on("cmake@3.14:", type="build")
     depends_on("git", type="build")
 
-    
+    # variants
+    variant("cuda", default=False, description="Enable CUDA support")
+    variant("allcpu", default=False, description="Enable all CPU backends")
+
     def cmake_args(self):
         cmake_args = []
 
@@ -34,6 +37,10 @@ class Llamacpp(CMakePackage, CudaPackage):
             cmake_args.append("-DCUDAToolkit_ROOT:STRING=" + self.spec["cuda"].prefix)
             if "CMAKE_CUDA_ARCHITECTURES" not in self.spec.variants:
                 cmake_args.append("-DCMAKE_CUDA_ARCHITECTURES=70;75;86;90")
+
+        if self.spec.satisfies("+allcpu"):
+            cmake_args.append("-DGGML_CPU_ALL_VARIANTS=ON")
+            cmake_args.append("-DGGML_BACKEND_DL=ON")
 
         return cmake_args
 
