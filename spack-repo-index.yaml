@@ -1,3 +1,5 @@
 repo_index:
   paths:
   - repos/spack_repo/llm_packages
+  - repos/spack_repo/sci_packages
+  - repos/spack_repo/com_packages
