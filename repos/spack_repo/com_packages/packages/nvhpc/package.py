@@ -23,6 +23,12 @@ from spack.package import *
 #  - package key must be in the form '{os}-{arch}' where 'os' is in the
 #    format returned by platform.system() and 'arch' by platform.machine()
 _versions = {
+    "25.11": {
+        "Linux-x86_64": (
+            "",
+            "https://developer.download.nvidia.com/hpc-sdk/25.11/nvhpc_2025_2511_Linux_x86_64_cuda_multi.tar.gz"
+        )
+    },
     "25.7": {
         "Linux-aarch64": (
             "fe8c8f24592e6ccf716bb402b3924bf88238e2b3b6752dd7555afcb7d5a5df72",
@@ -499,6 +505,13 @@ class Nvhpc(Package, CompilerPackage):
     provides("blas", when="+blas")
     provides("lapack", when="+lapack")
     provides("mpi", when="+mpi")
+
+    # Modifications to include libraries provided by nvhpc
+    provides("cuda@13.0", when="@25.11")
+    provides("cuda@12.9", when="@25.7")
+    provides("nccl@2.28.7", when="@25.11")
+    provides("scalapack@2.2.0", when="@25.7:25.11")
+    # End of Modifications
 
     provides("c", "cxx")
     provides("fortran")
