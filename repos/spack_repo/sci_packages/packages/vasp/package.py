@@ -267,6 +267,13 @@ class Vasp(MakefilePackage, CudaPackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+cuda %nvhpc"):
             env.set("NVHPC_CUDA_HOME", self.spec["cuda"].prefix)
+            prefix=join_path(self.spec["nvhpc"].prefix, "Linux_%s"%self.spec.target.family, self.spec["nvhpc"].version)
+            env.set("NVHPC_CUDA_HOME", join_path(prefix, "cuda"))
+            env.set("CUDA_HOME", join_path(prefix, "cuda"))
+            env.set("NVCOMPILER_COMM_LIBS_HOME", join_path(prefix, "comm_libs"))
+            env.set("NVCOMPILER_NCCL_HOME", join_path(prefix, "comm_libs", "nccl"))
+            env.prepend_path("LIBRARY_PATH", Prefix(join_path(prefix, "math_libs")).lib64)
+            env.prepend_path("LD_LIBRARY_PATH", Prefix(join_path(prefix, "math_libs")).lib64)
 
     def build(self, spec, prefix):
         make("DEPS=1, all")
