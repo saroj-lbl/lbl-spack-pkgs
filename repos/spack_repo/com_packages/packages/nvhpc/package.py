@@ -25,7 +25,7 @@ from spack.package import *
 _versions = {
     "25.11": {
         "Linux-x86_64": (
-            "",
+            "9970c6e443e7a4a442601e6f1685feb4a8271bc2e84769c225e9a76f4e7133e7",
             "https://developer.download.nvidia.com/hpc-sdk/25.11/nvhpc_2025_2511_Linux_x86_64_cuda_multi.tar.gz"
         )
     },
